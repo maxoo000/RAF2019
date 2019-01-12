@@ -15,7 +15,8 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = "/home/maxoo000/RAF2019/media"
+STATIC_ROOT = "/home/maxoo000/RAF2019/static"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # smtp mail servera
@@ -31,7 +32,7 @@ EMAIL_USE_TLS = True
 SECRET_KEY = '4hcn&^lsds@@uoa1#r7f$x4=ft=l+09snf_7zfcecqph+$y-v&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'maxoo000.pythonanywhere.com']
 
@@ -126,7 +127,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    STATIC_DIR,
+    STATIC_ROOT,
 ]
 
 MEDIA_URL = "/media/"
