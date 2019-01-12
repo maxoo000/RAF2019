@@ -1,0 +1,155 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Promena lozinke</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Register as a customer"/>
+    <meta name="keywords" content="Create a new customer account"/>
+    <meta name="author" content="MAXO"/>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+    <script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+
+</head>
+<body onload="Gasi()">
+
+<div class="container">
+
+</div>
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+
+
+
+    <div id="menjanje_lozinke">
+        <form method="post" class="fh5co-form animate-box" data-animate-effect="fadeIn">
+            {% csrf_token %}
+            <h2>Promena lozinke <small><a href="{% url 'korisnici:clanInfo' %}">Vrati se na profil</a></small></h2>
+{% csrf_token %}
+            <div class="form-group">
+                <p><a href="{% url 'korisnici:podesavanja' %}" style="border: none; background-color: transparent;">Licni podaci</a></p>
+            </div>
+            <div class="form-group">
+                <p>Stara lozinka</p>
+                {{ form.old_password }}<br>
+                 <a onclick="pregledPassworda()" id="lookPass"><i id="eye" class="fas fa-eye fa-3x"></i></a>
+            </div>
+
+            <div class="form-group">
+                <p>Nova lozinka</p>
+                {{ form.new_password1 }}
+            </div>
+            <div class="form-group">
+                <p>Ponovite novu lozinku</p>
+                {{ form.new_password2 }}
+
+            </div>
+        {% if promenjeno == 'da' %}
+                <p style="color: green;">Lozinka je uspesno promenjena</p>
+            {% elif promenjeno == "greska" %}
+            <p style="color:red;">Lose ste uneli podatke, probajte ponovo</p>
+
+        {% endif %}
+            <div class="form-group">
+                <input type="submit" value="Sacuvaj izmene" class="btn btn-primary">
+            </div>
+            <hr>
+            <p>Korisnicko ime: <br>{{ user.username }}</p>
+            <p>Ime: <br>{{ user.first_name }}</p>
+            <p>Prezime: <br>{{ user.last_name }}</p>
+            <p>Email: <br>{{ clan.mailPregled }}</p>
+        </form>
+
+        </div>
+
+
+
+    </div>
+</div>
+    <!-- jQuery -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- Placeholder -->
+    <script src="{% static 'js/jquery.placeholder.min.js' %}"></script>
+    <!-- Waypoints -->
+    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <!-- Main JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+
+    <script>
+        function pregledPassworda() {
+            var passShowing = $("#id_old_password").attr("type");
+            if (passShowing === "password") {
+                $("#id_old_password").attr("type", "text");
+                $("#eye").attr("class", "fas fa-eye-slash fa-3x")
+            }
+            else {
+                $("#id_old_password").attr("type", "password");
+                $("#eye").attr("class", "fas fa-eye fa-3x")
+            }
+        }
+    </script>
+
+<script>
+    $('#id_new_password1').addClass('form-control');
+    $('#id_new_password2').addClass('form-control');
+    $('#id_old_password').addClass('form-control');
+</script>
+
+<script>
+    $("#id_new_password2").keyup(function( event ) {
+ var prva = $('#id_new_password1').val();
+ var ponovo = $('#id_new_password2').val();
+ var ponovoSve = $('#id_new_password2');
+if(prva===ponovo){
+   ponovoSve.css("color", "green");
+}
+else{
+    ponovoSve.css("color", "red");
+}
+
+
+})
+
+</script>
+
+<script>
+$( "#id_new_password1" ).keyup(function( event ) {
+ var pp = $('#id_new_password1').val();
+ var p = $('#id_new_password1');
+ console.log(pp.length)
+ if (pp.length > 7){
+     p.css("color", "green");
+ }
+ else if (pp.length > 4 && p.length <=7){
+     p.css("color", "orange");
+ }
+
+ else{
+     p.css("color", "red");
+ }
+
+
+
+})
+</script>
+</body>
+</html>
+

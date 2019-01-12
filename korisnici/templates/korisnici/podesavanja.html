@@ -1,0 +1,192 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Podesavanja naloga</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Register as a customer"/>
+    <meta name="keywords" content="Create a new customer account"/>
+    <meta name="author" content="MAXO"/>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+    <script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+    <style>
+        .uredi_area{
+            max-width: 100%;
+            min-width: 100%;
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body onload="Gasi()">
+
+<div class="container">
+
+</div>
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+
+
+        <div id="licni">
+        <form method="post" enctype="multipart/form-data" class="fh5co-form animate-box" data-animate-effect="fadeIn">
+            {% csrf_token %}
+            <h2>Licni podaci <small><a href="{% url 'korisnici:clanInfo' %}">Vrati se na profil</a></small></h2>
+             <div class="form-group">
+                <p><a href="{% url 'korisnici:lozinka' %}" style="border: none; background-color: transparent;">Promena lozinke</a></p>
+            </div>
+        
+            <div class="form-group">
+                <p>Grad</p>
+                {{ cl_form.grad }}
+            </div>
+
+            <div class="form-group">
+                <p>Omiljeni sport</p>
+                {{ cl_form.omiljeni_sport }}
+            </div>
+
+            <div class="form-group">
+                <p>Broj telefona</p>
+                {{ cl_form.broj_telefona }}
+            </div>
+
+            <div class="form-group">
+                <p>Pol</p>
+                {{ cl_form.pol }}
+            </div>
+
+
+            <div class="form-group">
+                <p>Opis</p>
+                {{ cl_form.opis }}
+            </div>
+
+
+            <div class="form-group">
+                <p>Dodaj instagram</p>
+                {{ cl_form.instagram }}
+            </div>
+
+            <div class="form-group">
+                <p>Dodaj twitter</p>
+                {{ cl_form.twitter }}
+            </div>
+
+            <div class="form-group">
+            <p>Profilna slika</p>
+            <input type='file' name="profilna_slika" id="profilna_slika" accept="image/x-png,image/gif,image/jpeg" />
+                <br>
+                 <div class="w3-display-container">
+                    <center><img id="myImg" src="{{ clan.profilna_slika.url }}" style="width:100%; min-height: 100px; max-height: 500px;" alt="Avatar">
+</center>
+                </div>
+            </div>
+
+
+
+
+
+            <div class="form-group">
+                <input type="submit" value="Sacuvaj izmene" class="btn btn-primary">
+            </div>
+        </form>
+        </div>
+
+
+
+
+
+
+
+
+
+    </div>
+</div>
+    <!-- jQuery -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- Placeholder -->
+    <script src="{% static 'js/jquery.placeholder.min.js' %}"></script>
+    <!-- Waypoints -->
+    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <!-- Main JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+<!-- NAMESTANJE PODATAKA -->
+<script>
+
+$("#id_opis").val("{{ clan.opis }}");
+$("#id_broj_telefona").val("{{ clan.broj_telefona }}");
+$("#id_grad").val("{{ clan.grad }}");
+$("#id_pol").val("{{ clan.pol }}");
+$("#id_omiljeni_sport").val("{{ clan.omiljeni_sport }}");
+$("#id_instagram").val("{{ clan.instagram }}");
+$("#id_twitter").val("{{ clan.twitter }}");
+
+
+if ($("#grad") === ""){
+
+}
+
+</script>
+
+<script type="text/javascript">
+    /* The uploader form */
+    $(function () {
+        $(":file").change(function () {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = imageIsLoaded;
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+
+    function imageIsLoaded(e) {
+        $('#myImg').attr('src', e.target.result);
+        $('#yourImage').attr('src', e.target.result);
+    };
+
+</script>
+
+
+    <script>
+        function pregledPassworda() {
+            var passShowing = $("#password").attr("type");
+            if (passShowing === "password") {
+                $("#password").attr("type", "text");
+                $("#eye").attr("class", "fas fa-eye-slash fa-3x")
+            }
+            else {
+                $("#password").attr("type", "password");
+                $("#eye").attr("class", "fas fa-eye fa-3x")
+            }
+        }
+    </script>
+
+</body>
+</html>
+

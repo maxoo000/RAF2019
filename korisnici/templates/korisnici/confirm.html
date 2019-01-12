@@ -1,0 +1,13 @@
+{% load i18n %}{% autoescape off %}
+{% blocktrans %}{{ site_name }} <br> Zahtev za resetovanje lozinke {% endblocktrans %}
+
+{% trans "Idite na link ispod da bi ste resetovali svoju lozinku." %}
+{% block reset_link %}
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+{% endblock %}
+{% trans "Vase korisnicko ime:" %} {{ user.get_username }}
+
+{% trans "MAXO" %}
+
+
+{% endautoescape %}

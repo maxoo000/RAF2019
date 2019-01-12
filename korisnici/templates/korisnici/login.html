@@ -1,0 +1,79 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MAXO - prijavljivanje</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Free HTML5 Template by FreeHTML5.co" />
+	<meta name="keywords" content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive" />
+	<meta name="author" content="MAXO" />
+
+
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
+	
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/animate.css' %}">
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+	<!-- Modernizr JS -->
+	<script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+
+	</head>
+	<body>
+
+		<div class="container">
+<h1>MAXO</h1>
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4">
+
+
+
+					<form action="{% url 'korisnici:loginPage' %}" method="post" class="fh5co-form animate-box" data-animate-effect="fadeIn">
+						<h2>Prijavi se</h2>
+                        {% csrf_token %}
+						<div class="form-group">
+							<label for="korisnicko_ime" class="sr-only">Korisnicko ime</label>
+							<input type="text" class="form-control" id="korisnicko_ime" name="korisnicko_ime" placeholder="Korisnicko ime" autocomplete="off">
+						</div>
+						<div class="form-group">
+							<label for="lozinka" class="sr-only">Lozinka</label>
+							<input type="password" class="form-control" id="lozinka" name="lozinka" placeholder="Lozinka" autocomplete="off">
+						</div>
+						<div class="form-group">
+							<p><a href="{% url 'password_reset' %}">Zaboravili ste lozinku</a></p>
+						</div>
+                        <div class="form-group">
+							<p>Nemate nalog? <a href="{% url 'korisnici:register' %}">Registrujte se</a></p>
+						</div>
+                        {% if greska %}
+                        <p style="color: red;">Pogresno korisnicko ime ili lozinka</p>
+                        {% endif %}
+						<div class="form-group">
+							<center><input type="submit" value="Prijavi se" class="btn btn-primary"></center>
+						</div>
+					</form>
+
+				</div>
+			</div>
+		</div>
+	
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<!-- Bootstrap -->
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<!-- Placeholder -->
+	<script src="{% static 'js/jquery.placeholder.min.js' %}"></script>
+	<!-- Waypoints -->
+	<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+	<!-- Main JS -->
+	<script src="{% static 'js/main.js' %}"></script>
+
+	</body>
+</html>
+

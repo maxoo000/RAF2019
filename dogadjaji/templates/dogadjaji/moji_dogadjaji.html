@@ -1,0 +1,296 @@
+{% load staticfiles %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MAXO - {{ user.username }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <style>
+        @import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+        html, body, h1, h2, h3, h4, h5, h6 {
+            font-family: "Roboto", sans-serif;
+        }
+
+        fieldset, label {
+            margin: auto;
+            padding: 0;
+        }
+
+        /****** Style Star Rating Widget *****/
+
+        .rating {
+            margin: auto;
+            border: none;
+            float: left;
+        }
+
+        .rating > input {
+            display: none;
+        }
+
+        .rating > label:before {
+            margin: 5px;
+            font-size: 3em;
+            font-family: FontAwesome;
+            display: inline-block;
+            content: "\f005";
+        }
+
+        .rating > .half:before {
+            content: "\f089";
+            position: absolute;
+        }
+
+        .rating > label {
+            color: #ddd;
+            float: right;
+        }
+
+        /***** CSS Magic to Highlight Stars on Hover *****/
+
+        .rating > input:checked ~ label, /* show gold star when clicked */
+        .rating:not(:checked) > label:hover, /* hover current star */
+        .rating:not(:checked) > label:hover ~ label {
+            color: orange;
+        }
+
+        /* hover previous stars in list */
+
+        .rating > input:checked + label:hover, /* hover current star when changing rating */
+        .rating > input:checked ~ label:hover,
+        .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+        .rating > input:checked ~ label:hover ~ label {
+            color: orange;
+        }
+    </style>
+</head>
+<body class="w3-light-grey" onload="brisi();">
+<!-- Page Container -->
+<br>
+<div class="w3-content w3-margin-top" style="max-width:1400px;">
+    <!-- The Grid -->
+    <div class="w3-row-padding">
+
+        <!-- Left Column -->
+        <div class="w3-third">
+
+            <div class="w3-white w3-text-grey w3-card-4">
+
+
+                <div class="w3-container">
+
+                    <br>
+
+
+                    <h3>Prijave za moje dogadjaje</h3>
+
+                    {% if ceka %}
+                        {% for prijava in ceka %}
+                            <form action="{% url 'dogadjaji:prijava_rezultat' prijava_id=prijava.id %}" method="post">
+                                <br>
+                                {% csrf_token %}
+                                <h5><b><a target="_blank"
+                                          href="{% url 'korisnici:pregled' usid=prijava.prijavu_poslao.user.id %}">{{ prijava.prijavu_poslao.user.username }}</a></b>
+                                    {% if prijava.prijavu_poslao.prosecna_ocena > 4.5 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena <= 4.5 and prijava.prijavu_poslao.prosecna_ocena > 4 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star-half-alt fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena <= 4 and prijava.prijavu_poslao.prosecna_ocena > 3.5 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena <= 3.5 and prijava.prijavu_poslao.prosecna_ocena > 3 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star-half-alt fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena <= 3 and prijava.prijavu_poslao.prosecna_ocena > 2.5 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena <= 2.5 and prijava.prijavu_poslao.prosecna_ocena > 2 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star-half-alt fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena <= 2 and prijava.prijavu_poslao.prosecna_ocena > 1.5 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena <= 1.5 and prijava.prijavu_poslao.prosecna_ocena > 1 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="fas fa-star-half-alt fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena <= 1 and prijava.prijavu_poslao.prosecna_ocena > 0.5 %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% elif prijava.prijavu_poslao.prosecna_ocena == 0 %}
+                                        <div style="display: inline;">
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+                                    {% else %}
+                                        <div style="display: inline;">
+                                            <i class="fas fa-star-half-alt fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-fw" style="color:orange;"></i>
+                                        </div>
+
+                                    {% endif %}
+                                </h5>
+                                <h5 style="word-break: break-word;">
+                                    Dogadjaj: {{ prijava.prijava_za_dogadjaj.naziv }}</h5>
+                            {% if prijava.prijava_za_dogadjaj.potrebno_igraca == prijava.prijava_za_dogadjaj.ima_igraca %}
+                            <button type="button" class="btn btn-secondary btn-lg" disabled>Ovaj dogadjaj je popunjen
+                                    </button>
+                            {% else %}
+                                <select name="izbor" class="form-control">
+                                    <option value="prihvati">Prihvati prijavu</option>
+                                    <option value="odbi">Odbi prijavu</option>
+                                </select><br>
+
+                                <input type="submit" value="Potvrdi" class="btn btn-primary">
+                                <hr>
+                            {% endif %}
+                            </form>
+                        {% endfor %}
+                    {% else %}
+                        <h5>Nemate prijava na cekanju</h5>
+                    {% endif %}
+                    <br>
+                </div>
+            </div>
+            <br>
+
+            <!-- End Left Column -->
+        </div>
+
+        <!-- Right Column -->
+        <div class="w3-twothird"><h2>
+            <a href="{% url 'korisnici:podesavanja' %}" style="text-decoration:none;"
+               class="fas fa-cogs w3-margin-right w3-text-teal" title="Podesavanja naloga"></a>
+            <a href="{% url 'dogadjaji:pretraga' %}" style="text-decoration:none;"
+               class="fas fa-search w3-margin-right w3-text-teal" title="Pretrazuj"></a>
+            <a href="{% url 'dogadjaji:nov' %}" style="text-decoration:none;"
+               class="fas fa-plus w3-margin-right w3-text-teal" title="Organizuj dogadjaj"></a>
+            <a href="{% url 'korisnici:clanInfo' %}" style="text-decoration:none;"
+               class="fas fa-user w3-margin-right w3-text-teal" title="Vrati se na profil"></a>
+
+
+            <a href="{% url 'logoutPage' %}" style="text-decoration:none; float: right;"
+               class="fas fa-sign-out-alt w3-margin-right w3-text-teal" title="Odjavi se"></a>
+
+        </h2>
+
+
+            <div class="w3-container w3-card w3-white w3-margin-bottom">
+                <h1 class="w3-padding-16">Spisak mojih dogadjaja</h1><br>
+
+                {% if moji_dogadjaji %}
+                    {% for dogadjaj in moji_dogadjaji %}
+                        <form action="{% url 'dogadjaji:kraj' dogadjaj_kraj_id=dogadjaj.id %}" method="post"
+                              target="_blank"
+                        onsubmit="return confirm('Da li ste sigurni da zelite da zavrsite ovaj dogadjaj?');">
+                            {% csrf_token %}
+                            <h3>{{ dogadjaj.naziv }}</h3>
+                            <br>
+                            <p>Potrebno igraca: <i>{{ dogadjaj.ima_igraca }}/{{ dogadjaj.potrebno_igraca }}</i></p>
+                            <h6 class="w3-text-teal"><i
+                                    class="fa fa-calendar fa-fw w3-margin-right"></i>{{ dogadjaj.datum_odrzavanja }}
+                            </h6>
+                            <br>
+                            {% if dogadjaj.ima_igraca == 0 %}
+                                <button type="button" class="btn btn-secondary btn-lg" disabled>Ne mozete zavrsiti
+                                    dogadjaj sa 0 clanova
+                                </button>
+                            {% else %}
+                                <input type="submit" value="Zavrsi dogadjaj" class="btn btn-success">
+                            {% endif %}
+                            <br><br>
+                        </form>
+                        <form action="{% url 'dogadjaji:otkaz' dogadjaj_za_otkaz=dogadjaj.id %}" target="_blank"
+                              method="post">
+                            {% csrf_token %}
+                            <input type="submit" value="Otkazi dogadjaj" class="btn btn-danger">
+                        </form>
+                        <hr>
+                    {% endfor %}
+                {% else %}
+                    <h3>Nemate aktivih turnira</h3>
+                {% endif %}
+
+
+
+
+                <!-- End Grid -->
+
+                <br><br>
+
+                <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+                <script src="{% static 'assets/js/skel.min.js' %}"></script>
+                <script src="{% static 'assets/js/util.js' %}"></script>
+                <script src="{% static 'assets/js/main.js' %}"></script>
+
+
+                <script>
+                    function brisi() {
+                        $("#navPanel").remove();
+                    }
+                </script>
+            </div>
+</body>
+</html>

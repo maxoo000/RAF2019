@@ -1,0 +1,10 @@
+Novi zahtev za dodavanje firme
+
+Naziv firme: {{firma}}
+
+Ime i prezime posiljaoca: {{ime_prezime}}
+Email: {{email}}
+Kontakt: {{kontakt}}
+Poruka: {{poruka}}
+
+

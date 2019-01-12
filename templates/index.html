@@ -1,0 +1,123 @@
+{% load staticfiles %}
+<!DOCTYPE HTML>
+
+<html>
+<head>
+    <title>MAXO</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+</head>
+<body>
+
+<!-- Header -->
+<header id="header">
+    <div class="inner">
+        <center><h1 style="font-size: 300%; color: white; font-family: 'Droid Sans';">MAXO</h1></center>
+
+    </div>
+</header>
+
+
+<!-- Banner -->
+<section id="banner">
+    <div class="inner">
+        <header>
+            <p>Dobrodosli na mesto gde mozete organizovati sportske turnire i dogadjaje sa ljudima poput vas</p>
+            <p>Pokazi svoje vestine na terenu, zabavi se i osvoji nagrade</p>
+        </header>
+
+        <div class="flex">
+
+            <div>
+                <span class="icon"><i class="fas fa-futbol"></i></span>
+                <h3>IGRAJ</h3>
+                <p>Igraj svoj omiljeni sport</p>
+            </div>
+
+            <div>
+                <span class="icon"><i class="fas fa-trophy"></i></span>
+                <h3>TURNIRI</h3>
+                <p>Pokazi se na turnirima</p>
+            </div>
+
+            <div>
+                <span class="icon"><i class="fas fa-handshake"></i></span>
+                <h3>DRUZENJE</h3>
+                <p>Upoznaj nove ljude</p>
+            </div>
+
+        </div>
+
+        <footer style="margin-left: 3%; margin-bottom: -8%;">
+            <h2><a href="{% url 'korisnici:register' %}" class="button">Registruj se</a></h2>
+            <a href="{% url 'korisnici:loginPage' %}" class="button">Vec imas nalog, prijavi se</a>
+            <br><br>
+            <a href="#footer" id="firme" class="button">Moja firma zeli da organizuje turnire</a>
+        </footer>
+    </div>
+</section>
+
+
+<footer id="footer">
+    <div class="inner">
+
+        <h3>Firme koje zele da organizuju turnire</h3>
+
+        <form action="#" method="post">
+        {% csrf_token %}
+            <div class="field half first">
+                <label for="ime">Ime i prezime</label>
+                <input name="ime" id="ime" type="text" placeholder="Vase ime i prezime" required="required">
+            </div>
+            <div class="field half">
+                <label for="email">Email</label>
+                <input name="email" id="email" type="email" placeholder="Vasa email adresa" required="required">
+            </div>
+            <div class="field half first">
+                <label for="firma">Firma</label>
+                <input name="firma" id="firma" type="text" placeholder="Naziv firme" required="required">
+            </div>
+            <div class="field half">
+                <label for="kontakt">Kontakt</label>
+                <input name="kontakt" id="kontakt" type="text" placeholder="Vas broj telefona" required="required">
+            </div>
+            <div class="field">
+                <label for="poruka">Poruka</label>
+                <textarea name="poruka" id="poruka" rows="6"
+                          placeholder="Poruka u kojoj ce te navesti kakve turnire bi ste pravili, koliko cesto i jos neke informacije koje mozda zelite da podelite." required="required"></textarea>
+            </div>
+            <ul class="actions">
+                <li><input value="Posalji zahtev" class="button alt" type="submit"></li>
+            </ul>
+        </form>
+
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+<script src="{% static 'assets/js/skel.min.js' %}"></script>
+<script src="{% static 'assets/js/util.js' %}"></script>
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+
+<script>
+    {% if poslato %}
+    alert("Poruka je uspesno poslata")
+    {% endif %}
+</script>
+
+<script>$(document).on('click', 'a[href^="#"]', function (event) {
+    event.preventDefault();
+
+    $('html, body').animate({
+        scrollTop: $($.attr(this, 'href')).offset().top
+    }, 1000);
+});
+</script>
+<script></script>
+</body>
+</html>
