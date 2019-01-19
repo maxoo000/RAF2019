@@ -13,5 +13,9 @@ urlpatterns = [
     path('otkaz/<int:dogadjaj_za_otkaz>/', views.otkaz, name='otkaz'),
     path('ocenjivanje/<int:id_dog>/', views.ocenjuj, name='ocenjivanje'),
     path('ocena/<int:id_dog>/<int:usid>/', views.ocena, name='ocena'),
+    path('<int:id_dog>/', views.pregled, name='pregled_dogadjaja'),
+    path('izbaci/<int:id_dog>/<int:usid>/', views.izbaci, name='izbacivanje'),
+    path('pozovi/<int:id_dog>/', views.pozovi, name='pozovi'),
+    path('pozivi/', views.pozivi, name='pozivi'),
 
 ]

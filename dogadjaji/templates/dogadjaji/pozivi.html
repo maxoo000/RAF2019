@@ -1,0 +1,93 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MAXO - pozivi</title>
+    <meta name="description" content="Free HTML5 Template by FreeHTML5.co"/>
+    <meta name="keywords" content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive"/>
+    <meta name="author" content="MAXO"/>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+    <!-- Modernizr JS -->
+    <script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+
+
+            <h2 style="margin-bottom: -10%;">
+                <a href="{% url 'korisnici:podesavanja' %}" style="text-decoration:none;"
+                   class="fas fa-cogs w3-margin-right w3-text-teal" title="Podesavanja naloga"></a>
+
+                <a href="{% url 'dogadjaji:pretraga' %}" style="text-decoration:none;"
+                   class="fas fa-search w3-margin-right w3-text-teal" title="Pretrazuj"></a>
+                <a href="{% url 'dogadjaji:nov' %}" style="text-decoration:none;"
+                   class="fas fa-plus w3-margin-right w3-text-teal" title="Organizuj dogadjaj"></a>
+
+                <a href="{% url 'korisnici:clanInfo' %}" style="text-decoration:none;"
+                   class="fas fa-user w3-margin-right w3-text-teal" title="Vrati se na profil"></a>
+
+                <a href="{% url 'logoutPage' %}" style="text-decoration:none; float: right;"
+                   class="fas fa-sign-out-alt w3-margin-right w3-text-teal" title="Odjavi se"></a>
+
+
+            </h2>
+
+            <div class="fh5co-form animate-box" data-animate-effect="fadeIn">
+
+                <p>Pozivi za vas</p>
+
+                {% if pozivi %}
+                    {% for poziv in pozivi %}
+                    <h4>Korisnik <a href="{% url 'korisnici:pregled' usid=poziv.pozvao.id%}" target="_blank">{{ poziv.pozvao.username }}</a> vas poziva da pogledate dogadjaj:</h4>
+                        <h4><a href="{% url 'dogadjaji:pregled_dogadjaja' id_dog=poziv.koji_dogadjaj.id%}" target="_blank">{{ poziv.koji_dogadjaj.naziv }}</a></h4>
+                        <h4 class="w3-text-teal"><i
+                                        class="fa fa-calendar fa-fw w3-margin-right "></i>{{ poziv.datum }}
+                                </h4>
+                        <hr>
+                    {% endfor %}
+                {% else %}
+                    <br>
+                    <h4>Nemate poziva na cekanju</h4>
+                {% endif %}
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<!-- Bootstrap -->
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<!-- Placeholder -->
+<script src="{% static 'js/jquery.placeholder.min.js' %}"></script>
+<!-- Waypoints -->
+<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+<!-- Main JS -->
+<script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>
+

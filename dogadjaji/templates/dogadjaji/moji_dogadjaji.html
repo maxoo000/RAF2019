@@ -5,7 +5,6 @@
 <head>
     <title>MAXO - {{ user.username }}</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -26,7 +25,6 @@
             padding: 0;
         }
 
-        /****** Style Star Rating Widget *****/
 
         .rating {
             margin: auto;
@@ -56,32 +54,27 @@
             float: right;
         }
 
-        /***** CSS Magic to Highlight Stars on Hover *****/
 
-        .rating > input:checked ~ label, /* show gold star when clicked */
-        .rating:not(:checked) > label:hover, /* hover current star */
+        .rating > input:checked ~ label,
+        .rating:not(:checked) > label:hover,
         .rating:not(:checked) > label:hover ~ label {
             color: orange;
         }
 
         /* hover previous stars in list */
 
-        .rating > input:checked + label:hover, /* hover current star when changing rating */
+        .rating > input:checked + label:hover,
         .rating > input:checked ~ label:hover,
-        .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+        .rating > label:hover ~ input:checked ~ label,
         .rating > input:checked ~ label:hover ~ label {
             color: orange;
         }
     </style>
 </head>
 <body class="w3-light-grey" onload="brisi();">
-<!-- Page Container -->
 <br>
 <div class="w3-content w3-margin-top" style="max-width:1400px;">
-    <!-- The Grid -->
     <div class="w3-row-padding">
-
-        <!-- Left Column -->
         <div class="w3-third">
 
             <div class="w3-white w3-text-grey w3-card-4">
@@ -194,18 +187,19 @@
                                 </h5>
                                 <h5 style="word-break: break-word;">
                                     Dogadjaj: {{ prijava.prijava_za_dogadjaj.naziv }}</h5>
-                            {% if prijava.prijava_za_dogadjaj.potrebno_igraca == prijava.prijava_za_dogadjaj.ima_igraca %}
-                            <button type="button" class="btn btn-secondary btn-lg" disabled>Ovaj dogadjaj je popunjen
+                                {% if prijava.prijava_za_dogadjaj.potrebno_igraca == prijava.prijava_za_dogadjaj.ima_igraca %}
+                                    <button type="button" class="btn btn-secondary btn-lg" disabled>Ovaj dogadjaj je
+                                        popunjen
                                     </button>
-                            {% else %}
-                                <select name="izbor" class="form-control">
-                                    <option value="prihvati">Prihvati prijavu</option>
-                                    <option value="odbi">Odbi prijavu</option>
-                                </select><br>
+                                {% else %}
+                                    <select name="izbor" class="form-control">
+                                        <option value="prihvati">Prihvati prijavu</option>
+                                        <option value="odbi">Odbi prijavu</option>
+                                    </select><br>
 
-                                <input type="submit" value="Potvrdi" class="btn btn-primary">
-                                <hr>
-                            {% endif %}
+                                    <input type="submit" value="Potvrdi" class="btn btn-primary">
+                                    <hr>
+                                {% endif %}
                             </form>
                         {% endfor %}
                     {% else %}
@@ -215,11 +209,7 @@
                 </div>
             </div>
             <br>
-
-            <!-- End Left Column -->
         </div>
-
-        <!-- Right Column -->
         <div class="w3-twothird"><h2>
             <a href="{% url 'korisnici:podesavanja' %}" style="text-decoration:none;"
                class="fas fa-cogs w3-margin-right w3-text-teal" title="Podesavanja naloga"></a>
@@ -244,9 +234,9 @@
                     {% for dogadjaj in moji_dogadjaji %}
                         <form action="{% url 'dogadjaji:kraj' dogadjaj_kraj_id=dogadjaj.id %}" method="post"
                               target="_blank"
-                        onsubmit="return confirm('Da li ste sigurni da zelite da zavrsite ovaj dogadjaj?');">
+                              onsubmit="return confirm('Da li ste sigurni da zelite da zavrsite ovaj dogadjaj?');">
                             {% csrf_token %}
-                            <h3>{{ dogadjaj.naziv }}</h3>
+                            <h3><a target="_blank" href="{% url 'dogadjaji:pregled_dogadjaja' id_dog=dogadjaj.id%}">{{ dogadjaj.naziv }}</a></h3>
                             <br>
                             <p>Potrebno igraca: <i>{{ dogadjaj.ima_igraca }}/{{ dogadjaj.potrebno_igraca }}</i></p>
                             <h6 class="w3-text-teal"><i
@@ -272,12 +262,6 @@
                 {% else %}
                     <h3>Nemate aktivih turnira</h3>
                 {% endif %}
-
-
-
-
-                <!-- End Grid -->
-
                 <br><br>
 
                 <script src="{% static 'assets/js/jquery.min.js' %}"></script>

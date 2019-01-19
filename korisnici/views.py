@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Clanovi
 from django.contrib import messages
-from dogadjaji.models import Dogadjaji, Prijava, Glasao, Ocenjivanje
+from dogadjaji.models import Dogadjaji, Prijava, Glasao, Ocenjivanje, Poziv
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -135,7 +135,7 @@ def clanInfo(request):
     print("\n\n\n")
     print(clan)
     print("\n\n\n")
-    ocene_igraca = Ocenjivanje.objects.filter(koga_ocenio=clan, ocena__gt=0).order_by('-datum_ocenjivanja')
+    ocene_igraca = Ocenjivanje.objects.filter(koga_ocenio=clan, ocena__gt=0).order_by('-id')
     lista_glasanja = []
     for ocena in ocene_igraca:
         if ocena.ocena <= 0 or ocena.ocena > 5:
@@ -145,9 +145,12 @@ def clanInfo(request):
     print('\n\n\n')
     print(lista_glasanja)
     print('\n\n\n')
+
+    pozivi = Poziv.objects.filter(ko_je_pozvan=clan, pogledano="Nije pogledano")
+    print(pozivi)
     return render(request, 'korisnici/clanInfo.html',
                   context={"user": user, "clan": clan, "ima": ima, 'prijave': rezultati_prijava,
-                           'dal_glasao': dal_glasao, 'lista_glasanja': lista_glasanja})
+                           'dal_glasao': dal_glasao, 'lista_glasanja': lista_glasanja, "pozivi": pozivi})
 
 
 @login_required
@@ -211,7 +214,7 @@ def pregled(request, usid):
     user = User.objects.get(id=usid)
     print(clan.user.username)
     print(user.username)
-    ocene_igraca = Ocenjivanje.objects.filter(koga_ocenio=clan, ocena__gt=0).order_by('datum_ocenjivanja')
+    ocene_igraca = Ocenjivanje.objects.filter(koga_ocenio=clan, ocena__gt=0).order_by('-id')
     lista_glasanja = []
     for ocena in ocene_igraca:
         if ocena.ocena <= 0 or ocena.ocena > 5:
@@ -221,3 +224,12 @@ def pregled(request, usid):
 
     return render(request, 'korisnici/pregled.html',
                   context={"user": user, "clan": clan, 'lista_glasanja': lista_glasanja})
+
+
+
+
+
+
+
+
+

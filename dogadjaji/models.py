@@ -70,3 +70,10 @@ class Glasao(models.Model):
     zavrsio = models.BooleanField(default=False)
 
 
+class Poziv(models.Model):
+    status_prijave = (("Nije pogledano", "Nije pogledano"), ("Jeste pogledano", "Jeste pogledano"))
+    pozvao = models.ForeignKey(User, on_delete=models.CASCADE, unique=False)
+    ko_je_pozvan = models.ForeignKey(Clanovi, on_delete=models.CASCADE, unique=False)
+    koji_dogadjaj = models.ForeignKey(Dogadjaji, on_delete=models.CASCADE, unique=False)
+    pogledano = models.CharField(max_length=100, default="Nije pogledano", choices=status_prijave)
+    datum = models.DateField(default=timezone.now)

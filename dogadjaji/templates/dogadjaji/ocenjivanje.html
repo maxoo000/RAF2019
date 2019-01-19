@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>MAXO - ocenjivanje</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Register as a customer"/>
     <meta name="keywords" content="Create a new customer account"/>
     <meta name="author" content="MAXO"/>
@@ -52,8 +51,6 @@
             padding: 0;
         }
 
-        /****** Style Star Rating Widget *****/
-
         .rating {
             margin: auto;
             border: none;
@@ -82,19 +79,17 @@
             float: right;
         }
 
-        /***** CSS Magic to Highlight Stars on Hover *****/
 
-        .rating > input:checked ~ label, /* show gold star when clicked */
-        .rating:not(:checked) > label:hover, /* hover current star */
+        .rating > input:checked ~ label,
+        .rating:not(:checked) > label:hover,
         .rating:not(:checked) > label:hover ~ label {
             color: orange;
         }
 
-        /* hover previous stars in list */
 
-        .rating > input:checked + label:hover, /* hover current star when changing rating */
+        .rating > input:checked + label:hover,
         .rating > input:checked ~ label:hover,
-        .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+        .rating > label:hover ~ input:checked ~ label,
         .rating > input:checked ~ label:hover ~ label {
             color: orange;
         }
@@ -116,7 +111,7 @@
                 <div class="inline">
                     <img src="{{ igrac.koga_ocenio.profilna_slika.url }}" alt="Profilna slika"
                          style="width: 100px; height: 100px;">
-                    <p>{{ igrac.koga_ocenio.user.username }}</p>
+                    <p><a href="{% url 'korisnici:pregled' usid=igrac.koga_ocenio.user.id%}" target="_blank">{{ igrac.koga_ocenio.user.username }}</a></p>
 
                 </div>
                 <div class="inline">

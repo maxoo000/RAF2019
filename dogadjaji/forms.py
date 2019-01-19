@@ -20,7 +20,7 @@ class df(forms.Form):
     datum_odrzavanja = forms.CharField(max_length=125,
                                        widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}))
     novac_za_prijavu = forms.IntegerField(
-        widget=forms.NumberInput(attrs={"class": 'form-control', 'value': 0, 'step': '100'}))
+        widget=forms.NumberInput(attrs={"class": 'form-control', 'value': 0, 'step': '100', 'min': 0}))
     potrebno_igraca = forms.IntegerField(
         widget=forms.NumberInput(attrs={"class": 'form-control', 'value': 1, 'min': 1}))
     grad = forms.ChoiceField(choices=Dogadjaji.gradovi, widget=forms.Select(attrs={'class': 'form-control'}))

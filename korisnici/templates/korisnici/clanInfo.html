@@ -5,7 +5,6 @@
 <head>
     <title>MAXO - {{ user.username }}</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -23,13 +22,9 @@
 
 </head>
 <body class="w3-light-grey" onload="brisi();">
-<!-- Page Container -->
 <br>
 <div class="w3-content w3-margin-top" style="max-width:1400px;">
-    <!-- The Grid -->
     <div class="w3-row-padding">
-
-        <!-- Left Column -->
         <div class="w3-third">
 
             <div class="w3-white w3-text-grey w3-card-4">
@@ -194,11 +189,7 @@
                 </div>
             </div>
             <br>
-
-            <!-- End Left Column -->
         </div>
-
-        <!-- Right Column -->
         <div class="w3-twothird"><h2>
             <a href="{% url 'korisnici:podesavanja' %}" style="text-decoration:none;"
                class="fas fa-cogs w3-margin-right w3-text-teal" title="Podesavanja naloga"></a>
@@ -214,6 +205,14 @@
                 <a style="text-decoration:none; color:gray;"
                    class="fas fa-trophy w3-margin-right" title="Nemate organizovanih dogadjaja"></a>
             {% endif %}
+
+            {% if pozivi %}
+                <a href="{% url 'dogadjaji:pozivi' %}" style="text-decoration:none;"
+               class="fas fa-envelope w3-margin-right w3-text-teal" title="Imate nove pozive"></a>
+        {% else %}
+            <a href="{% url 'dogadjaji:pozivi' %}" style="text-decoration:none;"
+               class="far fa-envelope-open w3-margin-right w3-text-gray" title="Nemate novih poziva"></a>
+{% endif %}
 
             <a href="{% url 'logoutPage' %}" style="text-decoration:none; float: right;"
                class="fas fa-sign-out-alt w3-margin-right w3-text-teal" title="Odjavi se"></a>
@@ -250,19 +249,58 @@
                         {% else %}
                             <div class="w3-container"
                                  style="background-color: whitesmoke; border-radius: 10px; padding: 10px;">
-                                <h5 class="w3-opacity"><b>{{ prijava.prijava_za_dogadjaj.naziv }}</b></h5>
+
+                                <h5 class="w3-opacity">
+                                    {% if prijava.prijava_za_dogadjaj.organizator.firma %}
+
+                                        <i class="fas fa-star fa-fw w3-margin-right w3-text-teal"
+                                           title="Dogadjaj organizovan od strane nekog preduzeca"></i>
+                                    {% endif %}
+                                    <b><a
+                                            target="_blank"
+                                            href="{% url 'dogadjaji:pregled_dogadjaja' id_dog=prijava.prijava_za_dogadjaj.id %}">{{ prijava.prijava_za_dogadjaj.naziv }}</a></b>
+                                </h5>
                                 <h6 class="w3-text-teal"><i
                                         class="fa fa-calendar fa-fw w3-margin-right"></i>{{ prijava.prijava_za_dogadjaj.datum_odrzavanja }}
                                 </h6><br>
                                 {% if prijava.primljen == "Primljen" %}
+
+
+
+
                                     <span class="bg-success" style="padding: 5px; border-radius: 3px;">Prihvacen</span>
                                     <br>
+                                    <form action="{% url 'dogadjaji:pozovi' id_dog=prijava.prijava_za_dogadjaj.id %}"
+                                          target="_blank" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group row">
+                                            <div class="col-3"><br>
+                                                <label for="ex1">Pozovi igraca</label>
+                                                <input class="form-control" type="text" id="ex1" name="username"
+                                                       placeholder="Korisnicko ime">
+                                            </div>
+
+                                        </div>
+                                        <input type="submit" value="Posalji poziv" class="btn btn-primary">
+
+                                    </form>
+
+
+
+
+
+
+
+
+
+
+
                                     <br>
                                     <p>Kontaktirajte organizatora preko informacija ne njegovoj stranici: <a
                                             href="{% url 'korisnici:pregled' usid=prijava.organizator.id %}">{{ prijava.organizator.username }}</a>
                                     </p>
                                 {% else %}
-                                    <span class="bg-danger" style="padding: 5px; border-radius: 3px;">Odbijen</span><br>
+                                    <span class="bg-danger" style="padding: 5px; border-radius: 3px;">Odbijen</span>
                                     <br>
                                 {% endif %}
 
@@ -271,7 +309,7 @@
                         {% endif %}
                     {% endfor %}
                 {% else %}
-                    <h3>Nemate o vasim prijavama</h3>
+                    <h3>Nemate obavestenja o vasim prijavama</h3>
                     <hr>
                 {% endif %}
 
@@ -280,128 +318,127 @@
             <div class="w3-container w3-card w3-white">
                 <h2 class="w3-text-grey w3-padding-16"><i
                         class="fas fa-star fa-fw w3-margin-right w3-text-teal"></i>Ocene</h2>
-            <ul style="list-style-type: none;" class="lista">
-                {% if lista_glasanja %}
-                    {% for ko, ocena, komentar in lista_glasanja %}
-                        <li>
-                        <div class="w3-container nov_glas">
-                            <div class="inline">
-                                <img src="{{ ko.profilna_slika.url }}" alt="Profilna slika"
-                                     style="width: 100px; height: 100px; margin-right: 20px; float: left;">
+                <ul style="list-style-type: none;" class="lista">
+                    {% if lista_glasanja %}
+                        {% for ko, ocena, komentar in lista_glasanja %}
+                            <li>
+                                <div class="w3-container nov_glas">
+                                    <div class="inline">
+                                        <img src="{{ ko.profilna_slika.url }}" alt="Profilna slika"
+                                             style="width: 100px; height: 100px; margin-right: 20px; float: left;">
 
 
-                            </div>
-                            <div class="inline">
-                                <h2><a href="{% url 'korisnici:pregled' usid=ko.user.id %}"
-                                       target="_blank">{{ ko.user.username }}</a></h2>
+                                    </div>
+                                    <div class="inline">
+                                        <h2><a href="{% url 'korisnici:pregled' usid=ko.user.id %}"
+                                               target="_blank">{{ ko.user.username }}</a></h2>
 
 
-                                {% if ocena > 4.5 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena <= 4.5 and ocena > 4 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena <= 4 and ocena > 3.5 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena <= 3.5 and ocena > 3 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena <= 3 and ocena > 2.5 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena <= 2.5 and ocena > 2 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena <= 2 and ocena > 1.5 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena <= 1.5 and ocena > 1 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena <= 1 and ocena > 0.5 %}
-                                    <div>
-                                        <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    </div>
-                                {% elif ocena == 0 %}
-                                    <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                    <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                {% else %}
-                                    <div>
-                                        <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
-                                        <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                        {% if ocena > 4.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena <= 4.5 and ocena > 4 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena <= 4 and ocena > 3.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena <= 3.5 and ocena > 3 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena <= 3 and ocena > 2.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena <= 2.5 and ocena > 2 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena <= 2 and ocena > 1.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena <= 1.5 and ocena > 1 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena <= 1 and ocena > 0.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ocena == 0 %}
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                        {% else %}
+                                            <div>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+
+                                        {% endif %}
+                                        <br>
+                                        <span style="color: lightslategray;"> <i>{{ komentar }}</i></span>
                                     </div>
 
-                                {% endif %}
-                                <br>
-                                <span style="color: lightslategray;"> <i>{{ komentar }}</i></span>
-                            </div>
-
-                            <hr>
-                        </div>
-</li>
-                    {% endfor %}
-                {% else %}
-                    <h2><i>Niko vas jos nije ocenjivao</i></h2><br>
-                    <h3><a href="{% url 'dogadjaji:pretraga' %}">Prijavite se na neki dogadjaj</a></h3><br>
-                {% endif %}
-</ul>
+                                    <hr>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <h2><i>Niko vas jos nije ocenjivao</i></h2><br>
+                        <h3><a href="{% url 'dogadjaji:pretraga' %}">Prijavite se na neki dogadjaj</a></h3><br>
+                    {% endif %}
+                </ul>
             </div>
-            <br><br><!-- End Right Column -->
+            <br><br>
         </div>
 
-        <!-- End Grid -->
     </div>
     <br><br>
 

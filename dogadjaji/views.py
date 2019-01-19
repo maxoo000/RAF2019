@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from .forms import df, Pretraga
-from .models import Dogadjaji, Prijava, Ocenjivanje, Glasao
+from .models import Dogadjaji, Prijava, Ocenjivanje, Glasao, Poziv
 from korisnici.models import Clanovi
 from django.contrib.auth.decorators import login_required
 
@@ -37,7 +37,8 @@ def dodajDogadjaj(request):
                                  novac_za_prijavu=novac_za_prijavu, potrebno_igraca=potrebno_igraca,
                                  grad=grad, sport=sport, novcana_nagrada=novcana_nagrada, organizator=clan)
             dogadjaj.save()
-            prijava_organizatora = Prijava(prijava_za_dogadjaj=dogadjaj, prijavu_poslao=clan, organizator=organizator, primljen="Primljen")
+            prijava_organizatora = Prijava(prijava_za_dogadjaj=dogadjaj, prijavu_poslao=clan, organizator=organizator,
+                                           primljen="Primljen")
             prijava_organizatora.save()
             print('\n\n\nRADII\n\n\n')
         else:
@@ -87,23 +88,27 @@ def pretraga(request):
                 if potrebno_igraca == 0:
                     print('igraca 0')
                     prikazani = svi_dogadjaji.filter(grad=grad, sport=sport, novac_za_prijavu=0,
-                                                     novcana_nagrada=nagrade, odrzano=0).exclude()
+                                                     novcana_nagrada=nagrade, odrzano=0,
+                                                     organizator__prosecna_ocena__gte=prosecna_ocena_pretrage).exclude()
 
                 else:
                     print('igraca 1')
                     prikazani = svi_dogadjaji.filter(grad=grad, sport=sport, potrebno_igraca=potrebno_igraca,
-                                                     novcana_nagrada=nagrade, odrzano=0)
+                                                     novcana_nagrada=nagrade, odrzano=0,
+                                                     organizator__prosecna_ocena__gte=prosecna_ocena_pretrage)
 
             else:
                 if potrebno_igraca == 0:
                     print("ima ucesca igraca 0")
                     prikazani = svi_dogadjaji.filter(grad=grad, sport=sport, novac_za_prijavu__gt=0,
-                                                     novcana_nagrada=nagrade, odrzano=0)
+                                                     novcana_nagrada=nagrade, odrzano=0,
+                                                     organizator__prosecna_ocena__gte=prosecna_ocena_pretrage)
                 else:
                     print('ima ucesca igraca 1')
                     prikazani = svi_dogadjaji.filter(grad=grad, sport=sport, novac_za_prijavu__gt=0,
                                                      novcana_nagrada=nagrade, odrzano=0,
-                                                     potrebno_igraca=potrebno_igraca)
+                                                     potrebno_igraca=potrebno_igraca,
+                                                     organizator__prosecna_ocena__gte=prosecna_ocena_pretrage)
         else:
             print(forma.errors)
             return HttpResponseRedirect(reverse('dogadjaji:pretraga'))
@@ -411,3 +416,182 @@ def ocena(request, id_dog, usid):
         clan_ocenjen.prosecna_ocena = prosek
         clan_ocenjen.save()
         return HttpResponseRedirect(reverse('korisnici:clanInfo'))
+
+
+@login_required
+def pregled(request, id_dog):
+    user = request.user
+    clan = Clanovi.objects.get(user=user)
+
+    dogadjaj = Dogadjaji.objects.get(id=id_dog)
+
+    organizator = dogadjaj.organizator
+    prijavljeni = Prijava.objects.filter(prijava_za_dogadjaj=dogadjaj, primljen="Primljen")
+    if organizator == clan:
+        editor = True
+        prijavio = True
+    else:
+        editor = False
+        svi_prijavljeni = Prijava.objects.filter(prijava_za_dogadjaj=dogadjaj)
+        prijavljeni_clanovi = []
+
+        for jedan in svi_prijavljeni:
+            prijavljeni_clanovi.append(jedan.prijavu_poslao)
+        if clan in prijavljeni_clanovi:
+            prijavio = True
+        else:
+            prijavio = False
+
+        print(prijavio)
+    # ZAVRSITI PRIKAZ DOGADJAJA I URADITI IZBACIVANJE IGRACA AKO JE USER ORGANIZATOR
+    print(editor)
+    return render(request, 'dogadjaji/dogadjaj.html',
+                  {"editor": editor, "dogadjaj": dogadjaj, "prijavljeni": prijavljeni, "prijavio": prijavio})
+
+
+@login_required
+def izbaci(request, id_dog, usid):
+    user = request.user
+    clan = Clanovi.objects.get(user=user)
+    try:
+        user_za_izbacivanje = User.objects.get(id=usid)
+    except:
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Korisnik kojeg zelite da izbacite ne postoji</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+    try:
+
+        dogadjaj = Dogadjaji.objects.get(id=id_dog)
+
+    except:
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Dogadjaj ne postoji</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+
+    clan_za_izbacivanje = Clanovi.objects.get(user=user_za_izbacivanje)
+    prijavljeni = Prijava.objects.get(prijava_za_dogadjaj=dogadjaj, prijavu_poslao=clan_za_izbacivanje)
+
+    if user_za_izbacivanje == user:
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Ne mozete izbaciti samog sebe</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+
+    if prijavljeni.primljen != "Primljen":
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Igrac nije primljen na ovaj dogadjaj</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+
+    if dogadjaj.odrzano == True:
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Ovaj dogadjaj je vec zavrsen</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+    prijavljeni.primljen = "Odbijen"
+    prijavljeni.save()
+    dogadjaj.ima_igraca -= 1
+    dogadjaj.save()
+    return HttpResponse(
+        "<head><title>MAXO</title></head>"
+        "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Igrac je uspesno uklonjen sa dogadjaja</h1>"
+        "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+        "<script>setTimeout(function(){window.close();},5000);</script>")
+
+
+@login_required
+def pozovi(request, id_dog):
+    if request.method != "POST":
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Doslo je do greske</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+
+    usid = str(request.POST['username']).strip()
+
+    user = request.user
+    clan = Clanovi.objects.get(user=user)
+
+    try:
+        user_za_poziv = User.objects.get(username=usid)
+        clan_za_poziv = Clanovi.objects.get(user=user_za_poziv)
+    except:
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Ovaj korisnik ne postoji</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+
+    if user == user_za_poziv:
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Ne mozete pozvati samog sebe</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+
+    try:
+        dogadjaj = Dogadjaji.objects.get(id=id_dog)
+    except:
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Dogadjaj ne postoji</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+
+    if dogadjaj.odrzano == True:
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Dogadjaj je vec odrzan</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+
+    try:
+        pozivi = Poziv.objects.get(pozvao=user, ko_je_pozvan=clan_za_poziv, koji_dogadjaj=dogadjaj)
+        return HttpResponse(
+            "<head><title>MAXO</title></head>"
+            "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Vec ste pozvali ovog igraca na ovaj dogadjaj</h1>"
+            "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+            "<script>setTimeout(function(){window.close();},5000);</script>")
+    # ZAVRSITI POZIVANJE
+    # SMISLITI KAKO DA AKO VISE LJUDI POZOVE NA JEDAN DOGADJAJ DA TO BUDE PRIKAZANO NEKAKO DRUGACIJE
+    except:
+        try:
+            prijava = Prijava.objects.get(prijava_za_dogadjaj=dogadjaj, prijavu_poslao=clan_za_poziv)
+            return HttpResponse(
+                "<head><title>MAXO</title></head>"
+                "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Igrac je vec poslao prijavu za ovaj dogadjaj</h1>"
+                "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+                "<script>setTimeout(function(){window.close();},5000);</script>")
+        except:
+            pozivi = Poziv(pozvao=user, ko_je_pozvan=clan_za_poziv, koji_dogadjaj=dogadjaj)
+            pozivi.save()
+            return HttpResponse(
+                "<head><title>MAXO</title></head>"
+                "<center><h1 style='font-family:Arial; margin-top: 20vh;'>Poziv za ucesce je poslat</h1>"
+                "<br>Stranica ce se zatvoriti za 5 sekundi</center>"
+                "<script>setTimeout(function(){window.close();},5000);</script>")
+
+
+@login_required
+def pozivi(request):
+    user = request.user
+    clan = Clanovi.objects.get(user=user)
+    pozivi = Poziv.objects.filter(ko_je_pozvan=clan).order_by('-id')
+    for poziv in pozivi:
+        if poziv.pogledano == "Jeste pogledano":
+            continue
+        poziv.pogledano = "Jeste pogledano"
+        poziv.save()
+    print(pozivi)
+
+    return render(request, 'dogadjaji/pozivi.html', {"pozivi": pozivi})
+
+

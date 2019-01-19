@@ -1,0 +1,246 @@
+{% load staticfiles %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MAXO - {{ user.username }}</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <style>
+        html, body, h1, h2, h3, h4, h5, h6 {
+            font-family: "Roboto", sans-serif;
+        }
+
+    </style>
+
+</head>
+<body class="w3-light-grey" onload="brisi();">
+<br>
+<div class="w3-content w3-margin-top" style="max-width:1400px;">
+    <div class="w3-row-padding">
+        <div>
+
+            <div class="w3-container w3-card w3-white">
+                <h2 class="w3-text-grey w3-padding-16">
+                    {% if dogadjaj.organizator.firma %}
+
+                        <i class="fas fa-star fa-fw w3-margin-right w3-text-teal"
+                           title="Dogadjaj organizovan od strane nekog preduzeca"></i>
+                    {% endif %}
+                    {{ dogadjaj.naziv }}</h2>
+                <h5 class="w3-text-teal"><i
+                        class="fa fa-calendar fa-fw w3-margin-right"></i>{{ dogadjaj.datum_odrzavanja }}
+                </h5><br>
+                <h4>Organizator: <a
+                        href="{% url 'korisnici:pregled' usid=dogadjaj.organizator.user.id %}"
+                        target="_blank">{{ dogadjaj.organizator.user.username }}</a>
+                </h4>
+
+                <br>
+                <h5 style="word-break: break-word;">{{ dogadjaj.opis }}</h5>
+                <br><br>
+                <h5 style="word-break: break-word;">Mesto odrzavanja: <i>{{ dogadjaj.mesto }}</i></h5><br>
+                <span class="bg-primary"
+                      style="padding: 5px; border-radius: 3px; margin-right: 10px;">{{ dogadjaj.sport }}</span>
+                <span class="bg-danger"
+                      style="padding: 5px; border-radius: 3px; margin-right: 10px;">{{ dogadjaj.grad }}</span><br><br>
+                <span class="bg-success"
+                      style="padding: 5px; border-radius: 3px; margin-right: 10px;">{{ dogadjaj.novcana_nagrada }}</span>
+                {% if dogadjaj.novac_za_prijavu == 0 %}
+                    <span class="bg-info"
+                          style="padding: 5px; margin-right: 10px; border-radius: 3px;">Ne placa se ucesce</span>
+                {% else %}
+                    <span class="bg-info"
+                          style="padding: 5px; border-radius: 3px; margin-right: 10px;">Ucesce kosta: {{ dogadjaj.novac_za_prijavu }}</span>
+                {% endif %}
+                <br><br><br>
+                <form action="{% url 'dogadjaji:pozovi' id_dog=dogadjaj.id %}" target="_blank" method="post">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <label for="ex1">Pozovi igraca</label>
+                            <input class="form-control" type="text" id="ex1" name="username"
+                                   placeholder="Korisnicko ime">
+                        </div>
+
+                    </div>
+                    <input type="submit" value="Posalji poziv" class="btn btn-primary">
+
+                </form>
+                <br><br>
+                {% if prijavio %}
+{% else %}
+                    {% if dogadjaj.ima_igraca < dogadjaj.potrebno_igraca %}
+                        <form action="{% url 'dogadjaji:prijava' id_dog=dogadjaj.id %}" method="post"
+                                  target="_blank">
+                        {% csrf_token %}
+                                        <input type="submit" value="Prijavi se" class="btn btn-success">
+                        <br><br>
+                        </form>
+                                    {% else %}
+                                        <button type="button" class="btn btn-secondary btn-lg" disabled>Sva mesta su vec
+                                            popunjena
+                                        </button>
+                        <br><br>
+                                    {% endif %}
+
+                {% endif %}
+
+                <h5>Prijavljeno: <i>{{ dogadjaj.ima_igraca }}/{{ dogadjaj.potrebno_igraca }}</i>
+                    <small>
+                        (Organizator nije uracunat)
+                    </small>
+                </h5>
+
+
+                <ul style="list-style-type: none;" class="lista">
+                    {% if prijavljeni %}
+                        {% for ko in prijavljeni %}
+                            <li>
+                                <div class="w3-container nov_glas">
+                                    <div class="inline">
+                                        <img src="{{ ko.prijavu_poslao.profilna_slika.url }}" alt="Profilna slika"
+                                             style="width: 100px; height: 100px; margin-right: 20px; float: left;">
+
+
+                                    </div>
+                                    <div class="inline">
+                                        <h2><a href="{% url 'korisnici:pregled' usid=ko.prijavu_poslao.user.id %}"
+                                               target="_blank">{{ ko.prijavu_poslao.user.username }}</a></h2>
+
+
+                                        {% if ko.prijavu_poslao.prosecna_ocena > 4.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena <= 4.5 and ko.prijavu_poslao.prosecna_ocena > 4 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena <= 4 and ko.prijavu_poslao.prosecna_ocena > 3.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena <= 3.5 and ko.prijavu_poslao.prosecna_ocena > 3 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena <= 3 and ko.prijavu_poslao.prosecna_ocena > 2.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena <= 2.5 and ko.prijavu_poslao.prosecna_ocena > 2 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena <= 2 and ko.prijavu_poslao.prosecna_ocena > 1.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena <= 1.5 and ko.prijavu_poslao.prosecna_ocena > 1 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena <= 1 and ko.prijavu_poslao.prosecna_ocena > 0.5 %}
+                                            <div>
+                                                <i class="fas fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+                                        {% elif ko.prijavu_poslao.prosecna_ocena == 0 %}
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                        {% else %}
+                                            <div>
+                                                <i class="fas fa-star-half-alt fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                                <i class="far fa-star fa-4x fa-fw" style="color:orange;"></i>
+                                            </div>
+
+                                        {% endif %}
+                                        {% if editor %}
+                                            {% if ko.prijavu_poslao != dogadjaj.organizator %}
+
+                                                <br>
+                                                <form action="{% url 'dogadjaji:izbacivanje' id_dog=dogadjaj.id usid=ko.prijavu_poslao.user.id %}"
+                                                      method="post" target="_blank">
+                                                    {% csrf_token %}
+                                                    <input type="submit" value="Izbaci igraca" class="btn btn-danger">
+                                                </form>
+                                            {% else %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+
+                                    <hr>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+                <br>
+            </div>
+            <br><br>
+        </div>
+    </div>
+    <br><br>
+
+    <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/js/skel.min.js' %}"></script>
+    <script src="{% static 'assets/js/util.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+    <script>
+        function brisi() {
+            $("#navPanel").remove();
+        }
+    </script>
+</div>
+</body>
+</html>

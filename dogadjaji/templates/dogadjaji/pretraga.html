@@ -5,7 +5,6 @@
 <head>
     <title>MAXO - {{ user.username }}</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -25,8 +24,6 @@
             margin: auto;
             padding: 0;
         }
-
-        /****** Style Star Rating Widget *****/
 
         .rating {
             margin: auto;
@@ -56,32 +53,24 @@
             float: right;
         }
 
-        /***** CSS Magic to Highlight Stars on Hover *****/
-
-        .rating > input:checked ~ label, /* show gold star when clicked */
-        .rating:not(:checked) > label:hover, /* hover current star */
+        .rating > input:checked ~ label,
+        .rating:not(:checked) > label:hover,
         .rating:not(:checked) > label:hover ~ label {
             color: orange;
         }
 
-        /* hover previous stars in list */
-
-        .rating > input:checked + label:hover, /* hover current star when changing rating */
+        .rating > input:checked + label:hover,
         .rating > input:checked ~ label:hover,
-        .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+        .rating > label:hover ~ input:checked ~ label,
         .rating > input:checked ~ label:hover ~ label {
             color: orange;
         }
     </style>
 </head>
 <body class="w3-light-grey" onload="brisi();">
-<!-- Page Container -->
 <br>
 <div class="w3-content w3-margin-top" style="max-width:1400px;">
-    <!-- The Grid -->
     <div class="w3-row-padding">
-
-        <!-- Left Column -->
         <div class="w3-third">
 
             <div class="w3-white w3-text-grey w3-card-4">
@@ -108,7 +97,7 @@
                             {{ forma.nagrade }}<br><br>
                             <p>Placa li se ucesce</p>
                             {{ forma.ucesce }}<br><br>
-                            <p>Minimalan potreban broj igraca
+                            <p>Potreban broj igraca
                                 <small>(0 ako nije bitno)</small>
                             </p>
                             {{ forma.potrebno_igraca }}
@@ -151,10 +140,7 @@
             </div>
             <br>
 
-            <!-- End Left Column -->
         </div>
-
-        <!-- Right Column -->
         <div class="w3-twothird"><h2>
             <a href="{% url 'korisnici:podesavanja' %}" style="text-decoration:none;"
                class="fas fa-cogs w3-margin-right w3-text-teal" title="Podesavanja naloga"></a>
@@ -171,6 +157,15 @@
             {% else %}
                 <a style="text-decoration:none; color:gray;"
                    class="fas fa-trophy w3-margin-right" title="Nemate organizovanih dogadjaja"></a>
+            {% endif %}
+
+
+            {% if pozivi %}
+                <a href="{% url 'dogadjaji:pozivi' %}" style="text-decoration:none;"
+                   class="fas fa-envelope w3-margin-right w3-text-teal" title="Imate nove pozive"></a>
+            {% else %}
+                <a href="{% url 'dogadjaji:pozivi' %}" style="text-decoration:none;"
+                   class="far fa-envelope-open w3-margin-right w3-text-gray" title="Nemate novih poziva"></a>
             {% endif %}
 
             <a href="{% url 'logoutPage' %}" style="text-decoration:none; float: right;"
@@ -300,7 +295,9 @@
                                 <h6 class="w3-text-teal"><i
                                         class="fa fa-calendar fa-fw w3-margin-right"></i>{{ dogadjaj.datum_odrzavanja }}
                                 </h6>
-                                <p style="word-break: break-word;"><b>{{ dogadjaj.naziv }}</b></p>
+                                <p style="word-break: break-word;"><b><a target="_blank"
+                                                                         href="{% url 'dogadjaji:pregled_dogadjaja' id_dog=dogadjaj.id %}">{{ dogadjaj.naziv }}</a></b>
+                                </p>
 
                                 <p style="word-break: break-word;">Mesto odrzavanja: <i>{{ dogadjaj.mesto }}</i></p>
 
@@ -342,6 +339,20 @@
 
                                 {% endif %}
 
+                                <br><br>
+                            </form>
+                            <form action="{% url 'dogadjaji:pozovi' id_dog=dogadjaj.id %}" target="_blank"
+                                  method="post">
+                                {% csrf_token %}
+                                <div class="form-group row">
+                                    <div class="col-3">
+                                        <label for="ex1">Pozovi Igraca</label>
+                                        <input class="form-control" type="text" id="ex1" name="username"
+                                               placeholder="Korisnicko ime">
+                                    </div>
+
+                                </div>
+                                <input type="submit" value="Posalji poziv" class="btn btn-primary">
 
                             </form>
                         </div>
@@ -354,10 +365,6 @@
                 {% endif %}
 
 
-
-
-
-                <!-- End Grid -->
 
                 <br><br>
 
