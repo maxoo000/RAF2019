@@ -1,0 +1,49 @@
+Projekat: 
+	SPORTSKA DRUSTVENA MREZA
+Opis: 
+	Ovaj projekat sluzi da omoguci ljudima i firmama da organizuju i ucestvuju u raznoraznim sportskim dogadjajima.
+	Na taj nacin ljudi mogu da se upoznaju, druze i promovisu sport, ali takodje i da pokazu sebe u najboljem svetlu.
+
+
+Tehnicki deo:
+	Za izradu projekta glavni deo je Django framework koji je koriscen za BackEnd pomocu Python programskog jezika. 
+	Za skladistenje podataka koriscena je SQLite baza podataka koja je kontrolisana preko Django-a.
+	Za FrontEnd korisceni su HTML, CSS i JavaScript. FrontEnd frameworci i biblioteke koje su koriscene su neke popout Bootstrap-a,
+	jQuery-a, FontAwesome(za ikonice i zvezdice na sajtu) i takodje su korisceni razni template-i za izradu sajta.
+	Sve slike na sajtu su sa https://www.pexels.com/royalty-free-images/ i mogu se koristiti bez problema.
+	Slike korisnika su posebne i one su postavljane od strane samih korisnika.
+	Sajt je takodje postavljen na internet (maxoo000.pythonanywhere.com) preko PythonAnywhere platforme koja omogucuje besplatan hosting 
+	na njihovim serverima.
+
+****Svi Python paketi koji su potrebni su unutar requirements.txt fajla zajedno sa linijom koja omogucava instalaciju svih paketa unutar 
+novog virtuelnog okruzenja.
+
+Koriscenje:
+	Ako se ne koristi sajt projekat se moze pokrenuti (ukoliko su svi requirements-i ispunjeni) pomocu koriscenja komande:
+	---python manage.py runserver; (U zavisnosti od nacina na koji se na odredjenom racunaru pokrece Python ovo moze varirati
+					npr. da treba python3 ili da ne treba python uopste.)
+
+	Nakon pokretanja moze se otici na 127.0.0.1:8000 gde ce moci da se vidi sajt.
+	
+	Mozete kreirati novog korisnika ili se prijaviti sa nekim od vec postojecih korisnika (informacije o korisnicima su ispod).
+	Ako se kreira novi korisnik necete imati nikakve dodatne informacije i moracete da se prijavite na dogadjaje i sa jos naloga da 
+	dovrsite proces zavrsavanja dogadjaja, pa zato bih preporucio koriscenjem nekih od vec datih naloga zato sto sam tu vec zavrsio neke
+	dogadjaje i zavrsio ocenjivanje korisnika da bi moglo da se vidi kako bi tipican nalog izgledao, ali svakako to nije obavezno da uradite.
+	
+
+	Za pristup admin panel-u idite na 127.0.0.1:8000/admin ili ako ste na sajtu maxoo000.pythonanywhere.com/admin i prijavite se pomocu 	
+	admin naloga prilozenog ispod.
+
+Admin username: maxo
+Admin password: randomPass000#
+
+
+Korisnicko ime             	Lozinka
+
+	maxoo000			randomPass000#
+	kosarkas123			randomPass000#
+	fudbaler123			randomPass000#
+	Neka_Firma			randomPass000#
+	neki_lik			randomPass000#
+	nikola00			randomPass000#
+	marko_markovic			randomPass000#
